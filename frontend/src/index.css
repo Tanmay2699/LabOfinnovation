@@ -1,0 +1,393 @@
+@import './styles/tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================================
+   Lab of Innovation — Deep Field
+   A research observatory, not a sci-fi game menu. Depth comes from layered
+   surfaces and hairline edges; no shadow here is chromatic.
+
+   Ambient motion is slow and quiet. Triggered motion is fast and precise.
+   Getting that backwards is what makes a site feel like a template.
+   ========================================================================= */
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* stops white overscroll on iOS revealing behind the sky */
+    background-color: var(--surface-void);
+  }
+
+  body {
+    background-color: var(--surface-base);
+    color: var(--text-body);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--text-starlight);
+    font-family: var(--font-display);
+    font-weight: 600; /* 700/800 halates on a near-black ground */
+  }
+
+  /* One focus rule for everything. It appears at once — focus never eases in. */
+  :focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-ring-focus);
+    border-radius: var(--radius-sm);
+  }
+
+  ::selection {
+    background: var(--signal-900);
+    color: var(--text-starlight);
+  }
+
+  /* Chrome forces a pale autofill fill over dark inputs and takes the text
+     colour with it. Override both layers. See the system's dark-theme risks. */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill,
+  select:-webkit-autofill {
+    -webkit-text-fill-color: var(--text-starlight);
+    -webkit-box-shadow: 0 0 0 1000px var(--surface-inset) inset;
+    caret-color: var(--text-starlight);
+    transition: background-color 9999s ease-in-out 0s;
+  }
+
+  /* 5.4:1. A placeholder is never fainter than this, and never replaces a label. */
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--text-muted);
+  }
+}
+
+@layer components {
+  /* ── surfaces ─────────────────────────────────────────────────────── */
+
+  .card-surface {
+    background: var(--surface-raised);
+    border: 1px solid var(--line-hairline);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-raised);
+  }
+
+  /* The photo plate. Kit photography comes back shot on white sweep; dropped
+     straight on surface-base each shot becomes the brightest object on the
+     page. The inset well gives the white edge somewhere to land, so it reads
+     as a lightbox rather than a hole. Never invert or multiply a product
+     photo to make it fit — that misrepresents what is being bought. */
+  .product-plate {
+    position: relative;
+    background: var(--surface-inset);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-inset-well);
+    padding: var(--space-4);
+    overflow: hidden;
+  }
+  .product-plate::after {
+    content: '';
+    position: absolute;
+    inset: var(--space-4);
+    border: 1px solid var(--line-hairline);
+    border-radius: var(--radius-xl);
+    pointer-events: none;
+  }
+  .product-plate img {
+    mix-blend-mode: normal;
+    filter: none;
+  }
+  .is-unavailable .product-plate {
+    opacity: var(--opacity-disabled);
+  }
+
+  /* Every photograph in assets/img has a white or near-white background.
+     Rather than touch ~30 call sites, content images get the inner rim.
+     Opt out with `.no-plate` on anything already transparent. */
+  main img:not(.no-plate) {
+    box-shadow: inset 0 0 0 1px var(--surface-void);
+  }
+
+  /* ── the sky: four layers, two per section, never above z-content ──── */
+
+  /* The starfield is a canvas now — see components/Space/StarField.jsx.
+     This class only positions it. */
+  .sky-starfield {
+    position: absolute;
+    inset: 0;
+    z-index: var(--z-starfield);
+    pointer-events: none;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* A soft gradient blob. The falloff is baked into the gradient stops rather
+     than a filter: blur(80px) on a 600px layer costs the GPU on every
+     composite and was the main source of scroll jank. Transform + opacity
+     only, so the breathing stays on the compositor. */
+  .sky-nebula {
+    position: absolute;
+    z-index: var(--z-nebula);
+    pointer-events: none;
+    border-radius: var(--radius-round);
+    opacity: var(--opacity-nebula);
+    will-change: transform, opacity;
+    animation: nebula-breathe calc(var(--dur-drift) * 3) var(--ease-float) infinite;
+    --nebula: var(--c-nebula-indigo);
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgb(var(--nebula)) 0%,
+      rgb(var(--nebula) / 0.62) 28%,
+      rgb(var(--nebula) / 0.24) 50%,
+      rgb(var(--nebula) / 0.06) 62%,
+      transparent 72%
+    );
+  }
+  .sky-nebula--indigo { --nebula: var(--c-nebula-indigo); }
+  .sky-nebula--ion    { --nebula: var(--c-nebula-ion); }
+  .sky-nebula--ember  { --nebula: var(--c-nebula-ember); }
+
+  /* Literal values: keyframes that read var() are not compositor-eligible. */
+  @keyframes nebula-breathe {
+    0%, 100% { transform: scale(1); opacity: 0.28; }
+    50% { transform: scale(1.08); opacity: 0.314; }
+  }
+
+  /* Each canvas repaints on its own; keep that from invalidating the section. */
+  .sky-starfield { contain: strict; }
+
+  /* The mission-control lattice, for technical content. The radial mask is not
+     decoration: a lattice running to a hard edge looks like a table. */
+  .sky-grid {
+    position: absolute;
+    inset: 0;
+    z-index: var(--z-ornament);
+    pointer-events: none;
+    opacity: var(--opacity-grid);
+    background-image:
+      repeating-linear-gradient(to right, var(--grid-line) 0 1px, transparent 1px var(--layout-grid-pitch)),
+      repeating-linear-gradient(to bottom, var(--grid-line) 0 1px, transparent 1px var(--layout-grid-pitch));
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 40%, transparent 100%);
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 40%, transparent 100%);
+  }
+
+  /* A section that carries sky. Needs overflow-hidden so nothing leaks. */
+  .band-atmospheric {
+    position: relative;
+    overflow: hidden;
+    background: var(--surface-void);
+  }
+
+  /* ── interaction ──────────────────────────────────────────────────── */
+
+  /* One sheen pass across a primary button on hover. Not a loop. A full-width
+     band translated across rather than `left` animated, which is a layout per
+     frame. */
+  .sheen-band {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    transform: translateX(-100%);
+    background: linear-gradient(100deg, transparent 32%, #ffffff14 44%, #ffffff29 50%, #ffffff14 56%, transparent 68%);
+  }
+
+  /* The pointer-tracking highlight that makes a tilted card read as a physical
+     surface catching light rather than a CSS transform. */
+  .card-glint {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgb(var(--c-signal-500) / 0.12), transparent 70%);
+    transition: opacity var(--dur-base) var(--ease-standard);
+  }
+  .group:hover .card-glint { opacity: 1; }
+
+  /* A Google Maps *embed* takes no style parameter, so a white rectangle is
+     otherwise unavoidable. This is a stopgap — a filtered iframe is a paint
+     the compositor cannot skip. Proper fixes, in order: the Maps JS API with
+     a dark styles array; MapLibre with its dark style; or a static image at
+     85% brightness. Whichever you pick, delete this filter. */
+  .map-embed {
+    filter: invert(91%) hue-rotate(180deg) brightness(0.92) contrast(0.88) saturate(0.85);
+  }
+
+  .skeleton {
+    border-radius: var(--radius-md);
+    animation: shimmer 1.4s linear infinite;
+    background: linear-gradient(90deg, var(--surface-raised) 0%, var(--surface-overlay) 50%, var(--surface-raised) 100%);
+    background-size: 260% 100%;
+  }
+}
+
+@layer utilities {
+  .container-custom {
+    max-width: var(--layout-container);
+    margin-inline: auto;
+    padding-inline: var(--layout-gutter);
+  }
+  @media (min-width: 1024px) {
+    .container-custom { padding-inline: var(--layout-gutter-lg); }
+  }
+
+  /* Dark grounds already read as airy; a light theme's whitespace reads as an
+     empty page here. 80 / 120, with 160 reserved for hero and closing CTA. */
+  .section-padding {
+    padding-block: var(--space-9);
+  }
+  @media (min-width: 1024px) {
+    .section-padding { padding-block: var(--space-10); }
+  }
+  .section-padding-hero {
+    padding-block: var(--space-10);
+  }
+  @media (min-width: 1024px) {
+    .section-padding-hero { padding-block: var(--space-11); }
+  }
+
+  /* The emphasised half of a headline, as in the system's hero:
+     "Build robots. <signal-300>Understand systems.</signal-300>" One flat
+     colour, never a gradient clip — a clip cannot be contrast-checked. */
+  .text-gradient {
+    color: var(--signal-300);
+    background-image: none;
+    -webkit-background-clip: initial;
+    background-clip: initial;
+    -webkit-text-fill-color: currentColor;
+  }
+  .text-accent-gradient {
+    color: var(--signal-300);
+  }
+
+  /* Former saturated fills, now quiet tinted tiles. */
+  .bg-gradient-primary,
+  .bg-gradient-secondary {
+    background: var(--surface-signal-wash);
+    border: 1px solid var(--signal-900);
+  }
+  .bg-gradient-accent {
+    background: var(--surface-ember-wash);
+    border: 1px solid var(--ember-900);
+  }
+
+  .glass-effect {
+    background: var(--overlay-glass);
+    backdrop-filter: blur(var(--blur-glass));
+    -webkit-backdrop-filter: blur(var(--blur-glass));
+    border: 1px solid var(--line-hairline);
+  }
+
+  /* Liquid glass header: a thin sheen over heavy blur + saturation, with a
+     lit top edge and a soft lower rim so it reads as a curved pane. The
+     hairline bottom edge is not optional: glass alone over a moving
+     starfield gives no reliable boundary. Past 40px of scroll it thickens. */
+  .liquid-glass {
+    background:
+      linear-gradient(180deg, rgb(255 255 255 / 0.10) 0%, rgb(255 255 255 / 0.03) 55%, rgb(255 255 255 / 0.06) 100%),
+      color-mix(in srgb, var(--surface-void) 18%, transparent);
+    backdrop-filter: blur(14px) saturate(180%) brightness(1.05);
+    -webkit-backdrop-filter: blur(14px) saturate(180%) brightness(1.05);
+    border-bottom: 1px solid rgb(255 255 255 / 0.14);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.28),
+      inset 0 -1px 0 rgb(255 255 255 / 0.06),
+      inset 0 -12px 24px -12px rgb(255 255 255 / 0.08),
+      0 8px 32px rgb(0 0 0 / 0.18);
+  }
+  .liquid-glass.is-scrolled {
+    background:
+      linear-gradient(180deg, rgb(255 255 255 / 0.08) 0%, rgb(255 255 255 / 0.02) 55%, rgb(255 255 255 / 0.05) 100%),
+      color-mix(in srgb, var(--surface-void) 55%, transparent);
+    backdrop-filter: blur(var(--blur-glass)) saturate(180%);
+    -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(180%);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.22),
+      inset 0 -1px 0 rgb(255 255 255 / 0.05),
+      var(--shadow-overlay);
+  }
+
+  .hairline-top { border-top: 1px solid var(--line-hairline); }
+
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--signal-300);
+  }
+  .eyebrow--ember { color: var(--ember-500); }
+
+  /* SKUs, batch codes, session IDs. Never running prose. */
+  .readout {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 20px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+}
+
+/* The default light scrollbar is a bright stripe down the edge of every page. */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--surface-base); }
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--surface-base);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--signal-500); }
+
+/* ============================================================================
+   Reduced motion is a contract, and the contract is that the page still looks
+   designed: loops stop at a composed resting frame, reveals become instant
+   opacity, parallax resolves to zero. Nothing disappears.
+   ========================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .sky-nebula,
+  .skeleton,
+  .sheen-band {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* A dark page prints as a solid black sheet. Certificates, invoices and order
+   confirmations force Dock. */
+@media print {
+  html, body {
+    background: #ffffff !important;
+    color: #0b0f19 !important;
+  }
+  .sky-starfield,
+  .sky-nebula,
+  .sky-grid,
+  [aria-hidden='true'] {
+    display: none !important;
+  }
+  * {
+    background-image: none !important;
+    box-shadow: none !important;
+    color: #0b0f19 !important;
+    border-color: #c8cdd6 !important;
+  }
+}

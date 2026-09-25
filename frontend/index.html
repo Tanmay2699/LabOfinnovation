@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en" data-theme="deep">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Matches surface.void so mobile browser chrome does not flash white on load. -->
+    <meta name="theme-color" content="#05070D" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="description" content="Lab of Innovation - Leading Robotics Education, Training, and Product Solutions" />
+    <meta name="keywords" content="robotics, education, training, STEM, innovation, automation, AI" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <title>Lab of Innovation - Enterprise Robotics Platform</title>
+    <!-- Page loader. Inline so it paints before the bundle loads on a hard
+         reload; src/components/Layout/Layout.jsx shows it again on each route
+         change. Colours fall back to literals because tokens.css is not loaded
+         yet at first paint. -->
+    <style>
+      .page-loader {
+        position: fixed; inset: 0; z-index: 2000;
+        display: grid; place-items: center;
+        background: var(--surface-void, #04060b);
+        opacity: 0; visibility: hidden;
+        transition: opacity 280ms cubic-bezier(0.22, 0.61, 0.36, 1), visibility 0s linear 280ms;
+      }
+      .page-loader.is-visible {
+        opacity: 1; visibility: visible;
+        transition: opacity 180ms cubic-bezier(0.22, 0.61, 0.36, 1), visibility 0s;
+      }
+      /* Nothing animates while it is hidden. */
+      .page-loader:not(.is-visible) * { animation-play-state: paused !important; }
+
+      .page-loader__stage { position: relative; width: min(240px, 60vw); }
+      .page-loader__robot { display: block; width: 100%; height: auto; overflow: visible; }
+
+      .page-loader__bubble {
+        position: absolute; top: -14px; left: 66%;
+        padding: 8px 14px; white-space: nowrap;
+        font: 600 13px/18px Inter, system-ui, sans-serif; letter-spacing: 0.02em;
+        color: var(--text-starlight, #f2f5fa);
+        background: var(--surface-raised, #0b0f19);
+        border: 1px solid var(--line-strong, #55647f);
+        border-radius: 12px;
+        animation: pl-bubble 1s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+      }
+      .page-loader__bubble::after { /* the tail, pointing at the head */
+        content: ''; position: absolute; left: 16px; bottom: -7px;
+        width: 12px; height: 12px;
+        background: inherit;
+        border: inherit; border-width: 0 1px 1px 0;
+        transform: rotate(45deg);
+      }
+      .page-loader__dots span { animation: pl-dot 1.2s infinite; opacity: 0.2; }
+      .page-loader__dots span:nth-child(2) { animation-delay: 0.2s; }
+      .page-loader__dots span:nth-child(3) { animation-delay: 0.4s; }
+
+      /* Walk cycle: 1s per stride. Leg B and arm B run half a cycle behind.
+         transform-box: view-box so each origin is a joint in SVG units. */
+      .pl-part { transform-box: view-box; animation-duration: 1s; animation-iteration-count: infinite; animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1); }
+      .pl-body   { animation-name: pl-bob; }
+      .pl-thigh  { transform-origin: 110px 170px; animation-name: pl-thigh; }
+      .pl-shin   { transform-origin: 110px 210px; animation-name: pl-shin; }
+      .pl-arm    { animation-name: pl-arm; }
+      .pl-arm--front { transform-origin: 84px 94px; }
+      .pl-arm--back  { transform-origin: 140px 94px; }
+      .pl-fore--front { transform-origin: 84px 130px; animation-name: pl-fore; }
+      .pl-fore--back  { transform-origin: 140px 130px; animation-name: pl-fore; }
+      .pl-b { animation-delay: -0.5s; }
+      .pl-shadow { transform-box: fill-box; transform-origin: center; animation: pl-shadow 0.5s cubic-bezier(0.37, 0, 0.63, 1) infinite; }
+      .pl-ground { animation: pl-ground 1s linear infinite; }
+
+      @keyframes pl-thigh { 0%, 100% { transform: rotate(-24deg); } 50% { transform: rotate(24deg); } }
+      @keyframes pl-shin  { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(6deg); } 75% { transform: rotate(46deg); } }
+      @keyframes pl-arm   { 0%, 100% { transform: rotate(22deg); } 50% { transform: rotate(-22deg); } }
+      @keyframes pl-fore  { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(-34deg); } }
+      @keyframes pl-bob   { 0%, 50%, 100% { transform: translateY(0); } 25%, 75% { transform: translateY(-4px); } }
+      @keyframes pl-shadow { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(0.9); } }
+      @keyframes pl-ground { to { stroke-dashoffset: 48; } }
+      @keyframes pl-bubble { 0%, 50%, 100% { transform: translateY(0); } 25%, 75% { transform: translateY(-4px); } }
+      @keyframes pl-dot   { 0%, 100% { opacity: 0.2; } 40% { opacity: 1; } }
+
+      /* Reduced motion: the robot stands still mid-stride; the words stay. */
+      @media (prefers-reduced-motion: reduce) {
+        .page-loader * { animation: none !important; }
+        .page-loader__dots span { opacity: 1; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="page-loader" class="page-loader is-visible" role="status" aria-live="polite">
+      <div class="page-loader__stage">
+        <div class="page-loader__bubble">Loading<span class="page-loader__dots" aria-hidden="true"><span>.</span><span>.</span><span>.</span></span></div>
+        <svg class="page-loader__robot" viewBox="0 0 220 280" aria-hidden="true" fill="none"
+             stroke="#0c1a1f" stroke-width="2" stroke-linejoin="round">
+          <!-- ground -->
+          <ellipse class="pl-shadow" cx="112" cy="266" rx="62" ry="7" fill="#000" opacity="0.35" stroke="none" />
+          <line class="pl-ground" x1="20" y1="266" x2="204" y2="266" stroke="#2a3450" stroke-dasharray="14 10" stroke-linecap="round" />
+
+          <g class="pl-part pl-body">
+            <!-- back arm (behind torso) -->
+            <g class="pl-part pl-arm pl-arm--back pl-b">
+              <rect x="134" y="94" width="12" height="38" rx="5" fill="#c4ab88" />
+              <g class="pl-part pl-fore--back pl-b">
+                <rect x="135" y="130" width="10" height="32" rx="4" fill="#c4ab88" />
+                <circle cx="140" cy="130" r="6" fill="#2b6f73" />
+                <path d="M133 160 h14 v8 a7 7 0 0 1 -14 0 z" fill="#2b6f73" />
+              </g>
+            </g>
+
+            <!-- back leg -->
+            <g class="pl-part pl-thigh pl-b">
+              <rect x="102" y="170" width="16" height="42" rx="6" fill="#c4ab88" />
+              <g class="pl-part pl-shin pl-b">
+                <rect x="103" y="210" width="14" height="40" rx="5" fill="#c4ab88" />
+                <circle cx="110" cy="210" r="8" fill="#2b6f73" />
+                <rect x="98" y="248" width="36" height="11" rx="3" fill="#2b6f73" />
+                <circle cx="110" cy="250" r="6" fill="#2b6f73" />
+              </g>
+            </g>
+
+            <!-- torso -->
+            <rect x="64" y="84" width="12" height="80" rx="3" fill="#2b6f73" />
+            <rect x="70" y="80" width="82" height="88" rx="6" fill="#3e9e9e" />
+            <path d="M78 90 h60" stroke="#5fbdb8" stroke-width="2" stroke-linecap="round" opacity="0.7" />
+
+            <!-- hip joint -->
+            <rect x="96" y="160" width="28" height="18" rx="9" fill="#e8d5b9" />
+
+            <!-- front leg -->
+            <g class="pl-part pl-thigh">
+              <rect x="102" y="170" width="16" height="42" rx="6" fill="#e8d5b9" />
+              <g class="pl-part pl-shin">
+                <rect x="103" y="210" width="14" height="40" rx="5" fill="#e8d5b9" />
+                <circle cx="110" cy="210" r="8" fill="#3e9e9e" />
+                <rect x="98" y="248" width="36" height="11" rx="3" fill="#3e9e9e" />
+                <circle cx="110" cy="250" r="6" fill="#3e9e9e" />
+              </g>
+            </g>
+
+            <!-- neck + head: a flat box with the visor on the leading face -->
+            <rect x="100" y="60" width="18" height="24" fill="#e8d5b9" />
+            <path d="M44 32 Q46 24 56 24 L168 22 Q178 22 178 32 L178 58 Q178 66 168 66 L56 66 Q46 66 44 58 Z" fill="#e8d5b9" />
+            <path d="M48 58 Q50 64 58 64 L166 64" stroke="#c4ab88" stroke-width="3" />
+            <rect x="126" y="30" width="48" height="28" rx="6" fill="#0f3b44" />
+            <rect x="134" y="41" width="14" height="6" rx="3" fill="#4fc3b5" stroke="none" />
+            <rect x="153" y="41" width="14" height="6" rx="3" fill="#4fc3b5" stroke="none" />
+
+            <!-- front arm (over torso) -->
+            <g class="pl-part pl-arm pl-arm--front">
+              <rect x="78" y="94" width="12" height="38" rx="5" fill="#e8d5b9" />
+              <g class="pl-part pl-fore--front">
+                <rect x="79" y="130" width="10" height="32" rx="4" fill="#e8d5b9" />
+                <circle cx="84" cy="130" r="6" fill="#3e9e9e" />
+                <path d="M77 160 h14 v8 a7 7 0 0 1 -14 0 z" fill="#3e9e9e" />
+              </g>
+              <path d="M70 96 a14 14 0 0 1 28 0 z" fill="#3e9e9e" />
+            </g>
+          </g>
+        </svg>
+      </div>
+    </div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

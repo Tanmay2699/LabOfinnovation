@@ -1,0 +1,324 @@
+/* ============================================================================
+   Lab of Innovation — Deep Field
+   Generated from the design system. DO NOT hand-edit: change the system and
+   regenerate, or the repo and the system drift apart.
+
+   Deep Field  (:root, [data-theme="deep"]) — every marketing page.
+   Dock        ([data-theme="dock"])        — cart, checkout, account, print.
+   ========================================================================= */
+
+:root,
+[data-theme='deep'] {
+  color-scheme: dark;
+
+  /* ── surfaces ─────────────────────────────────────────────────────── */
+  --surface-void: #04060b;
+  --surface-base: #070a12;
+  --surface-raised: #0b0f19;
+  --surface-overlay: #121826;
+  --surface-inset: #161d2e;
+  --surface-signal-wash: #0e1530;
+  --surface-ember-wash: #1a1208;
+
+  /* ── lines ────────────────────────────────────────────────────────── */
+  --line-hairline: #1b2337;
+  --line-strong: #55647f;
+
+  /* ── text ─────────────────────────────────────────────────────────── */
+  --text-starlight: #f2f5fa;
+  --text-body: #a8b2c6;
+  --text-muted: #7a869e;
+  --text-on-signal: #060912;
+  --text-on-ember: #140d04;
+  --text-inverse: #070a12;
+
+  /* ── signal (the only action colour) ──────────────────────────────── */
+  --signal-100: #dde4f7;
+  --signal-300: #a6b6e4;
+  --signal-500: #7e94d6;
+  --signal-700: #4e5f9c;
+  --signal-900: #202b4e;
+
+  /* ── ember (rationed: one element per page) ───────────────────────── */
+  --ember-300: #e3ba8c;
+  --ember-500: #c89058;
+  --ember-900: #3a2a16;
+
+  /* ── status (always with an icon and a word) ──────────────────────── */
+  --status-success: #5fae86;
+  --status-caution: #d2a63f;
+  --status-danger: #d96a6a;
+  --status-info: #8ea8dd;
+
+  /* ── space motifs (decorative only, never above --z-content) ──────── */
+  --star-bright: #e8eefa;
+  --star-dim: #8fa0c4;
+  --orbit-ring: #2a3450;
+  --constellation: #3d4a6b;
+  --grid-line: #101727;
+  --nebula-indigo: #1e2750;
+  --nebula-ion: #14324c;
+  --nebula-ember: #2e2013;
+
+  /* ── utility ──────────────────────────────────────────────────────── */
+  --focus-ring: #a6b6e4;
+  --scrim: #04060bd9;
+  --overlay-glass: #0b0f19cc;
+
+  /* ── shadows (never chromatic) ────────────────────────────────────── */
+  --shadow-raised: 0 1px 2px #00000080, 0 10px 30px -16px #000000b3;
+  --shadow-lift: 0 28px 60px -30px #000000cc, 0 0 0 1px #55647f40;
+  --shadow-overlay: 0 32px 80px -32px #000000e6, 0 2px 6px #00000066;
+  --shadow-inset-well: inset 0 1px 0 #ffffff0f;
+  --shadow-ring: 0 0 0 1px #7e94d63d;
+  --shadow-ring-focus: 0 0 0 2px #070a12, 0 0 0 4px #a6b6e4;
+}
+
+[data-theme='dock'] {
+  color-scheme: light;
+
+  --surface-void: #ffffff;
+  --surface-base: #f6f8fc;
+  --surface-raised: #ffffff;
+  --surface-overlay: #ffffff;
+  --surface-inset: #eef1f7;
+  --surface-signal-wash: #eef2fd;
+  --surface-ember-wash: #fdf6ec;
+
+  --line-hairline: #e2e7f0;
+  --line-strong: #7f8a9e;
+
+  --text-starlight: #0b0f19;
+  --text-body: #3c4557;
+  --text-muted: #5d6779;
+  --text-on-signal: #ffffff;
+  --text-on-ember: #ffffff;
+  --text-inverse: #ffffff;
+
+  --signal-100: #eef2fd;
+  --signal-300: #8b9ede;
+  --signal-500: #4a5c96;
+  --signal-700: #35447a;
+  --signal-900: #202b4e;
+
+  --ember-300: #a56a2c;
+  --ember-500: #8a5720;
+  --ember-900: #f6e7d2;
+
+  --status-success: #2f7355;
+  --status-caution: #8a6410;
+  --status-danger: #b13b3b;
+  --status-info: #3f5a94;
+
+  --star-bright: #4a5c96;
+  --star-dim: #98a4bd;
+  --orbit-ring: #d3dae8;
+  --constellation: #b6c0d4;
+  --grid-line: #eaeef5;
+  --nebula-indigo: #dfe6fa;
+  --nebula-ion: #dcecf6;
+  --nebula-ember: #f8ebda;
+
+  --focus-ring: #35447a;
+  --scrim: #0b0f1959;
+  --overlay-glass: #ffffffe6;
+
+  --shadow-raised: 0 1px 2px #0b0f1914, 0 8px 24px -16px #0b0f1926;
+  --shadow-lift: 0 24px 48px -28px #0b0f1933, 0 0 0 1px #7f8a9e33;
+  --shadow-overlay: 0 32px 72px -36px #0b0f1940, 0 2px 6px #0b0f1914;
+  --shadow-inset-well: inset 0 1px 0 #0b0f190a;
+  --shadow-ring: 0 0 0 1px #4a5c963d;
+  --shadow-ring-focus: 0 0 0 2px #ffffff, 0 0 0 4px #35447a;
+}
+
+/* ── theme-independent scales ───────────────────────────────────────── */
+:root {
+  /* type */
+  --font-display: Poppins, Inter, system-ui, sans-serif;
+  --font-sans: Inter, system-ui, -apple-system, Segoe UI, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* spacing — 4px grid */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 40px;
+  --space-8: 56px;
+  --space-9: 80px;
+  --space-10: 120px;
+  --space-11: 160px;
+
+  /* radius */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --radius-pill: 999px;
+  --radius-round: 50%;
+
+  /* duration — ambient runs long, triggered resolves fast */
+  --dur-instant: 90ms;
+  --dur-quick: 180ms;
+  --dur-base: 320ms;
+  --dur-slow: 560ms;
+  --dur-cinematic: 900ms;
+  --dur-reveal: 1200ms;
+  --dur-drift: 6s;
+  --dur-orbit: 28s;
+  --dur-starfield: 180s;
+
+  /* easing */
+  --ease-standard: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-overshoot: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --ease-float: cubic-bezier(0.37, 0, 0.63, 1);
+  --ease-drift: linear;
+
+  /* travel */
+  --travel-xs: 8px;
+  --travel-sm: 16px;
+  --travel-md: 32px;
+  --travel-lg: 64px;
+  --travel-xl: 120px;
+
+  /* stagger — multiply by index, cap the total at 600ms */
+  --stagger-tight: 40ms;
+  --stagger-base: 80ms;
+  --stagger-loose: 140ms;
+  --stagger-wave: 220ms;
+
+  /* parallax — fraction of scroll distance; three layers, never four */
+  --parallax-far: 0.08;
+  --parallax-mid: 0.22;
+  --parallax-near: 0.45;
+  --parallax-hero: 0.6;
+
+  /* opacity ceilings — what keeps the sky a background */
+  --opacity-starfield-far: 0.18;
+  --opacity-starfield-mid: 0.34;
+  --opacity-starfield-near: 0.6;
+  --opacity-nebula: 0.28;
+  --opacity-orbit: 0.45;
+  --opacity-grid: 0.5;
+  --opacity-disabled: 0.45;
+  --opacity-scrim: 0.85;
+
+  /* blur */
+  --blur-nebula: 80px;
+  --blur-glass: 18px;
+  --blur-depth: 3px;
+
+  /* layout */
+  --layout-container: 1200px;
+  --layout-container-wide: 1440px;
+  --layout-measure: 68ch;
+  --layout-gutter: 24px;
+  --layout-gutter-lg: 40px;
+  --layout-nav-height: 76px;
+  --layout-nav-height-scrolled: 62px;
+  --layout-grid-pitch: 64px;
+
+  /* z */
+  --z-starfield: 0;
+  --z-nebula: 1;
+  --z-ornament: 2;
+  --z-content: 10;
+  --z-nav: 100;
+  --z-overlay: 1000;
+}
+
+/* ============================================================================
+   Channel form — the same colours as "R G B" triplets.
+   Tailwind reads these so opacity modifiers (bg-surface-card/70) keep working
+   while the theme still switches on [data-theme]. Generated alongside the hex
+   set above; never edit one without the other.
+   ========================================================================= */
+
+:root,
+[data-theme='deep'] {
+  --c-surface-void: 4 6 11;
+  --c-surface-base: 7 10 18;
+  --c-surface-raised: 11 15 25;
+  --c-surface-overlay: 18 24 38;
+  --c-surface-inset: 22 29 46;
+  --c-surface-signal-wash: 14 21 48;
+  --c-surface-ember-wash: 26 18 8;
+  --c-line-hairline: 27 35 55;
+  --c-line-strong: 85 100 127;
+  --c-text-starlight: 242 245 250;
+  --c-text-body: 168 178 198;
+  --c-text-muted: 122 134 158;
+  --c-text-on-signal: 6 9 18;
+  --c-text-on-ember: 20 13 4;
+  --c-text-inverse: 7 10 18;
+  --c-signal-100: 221 228 247;
+  --c-signal-300: 166 182 228;
+  --c-signal-500: 126 148 214;
+  --c-signal-700: 78 95 156;
+  --c-signal-900: 32 43 78;
+  --c-ember-300: 227 186 140;
+  --c-ember-500: 200 144 88;
+  --c-ember-900: 58 42 22;
+  --c-status-success: 95 174 134;
+  --c-status-caution: 210 166 63;
+  --c-status-danger: 217 106 106;
+  --c-status-info: 142 168 221;
+  --c-star-bright: 232 238 250;
+  --c-star-dim: 143 160 196;
+  --c-orbit-ring: 42 52 80;
+  --c-constellation: 61 74 107;
+  --c-grid-line: 16 23 39;
+  --c-nebula-indigo: 30 39 80;
+  --c-nebula-ion: 20 50 76;
+  --c-nebula-ember: 46 32 19;
+  --c-focus-ring: 166 182 228;
+  --c-scrim: 4 6 11;
+  --c-overlay-glass: 11 15 25;
+}
+
+[data-theme='dock'] {
+  --c-surface-void: 255 255 255;
+  --c-surface-base: 246 248 252;
+  --c-surface-raised: 255 255 255;
+  --c-surface-overlay: 255 255 255;
+  --c-surface-inset: 238 241 247;
+  --c-surface-signal-wash: 238 242 253;
+  --c-surface-ember-wash: 253 246 236;
+  --c-line-hairline: 226 231 240;
+  --c-line-strong: 127 138 158;
+  --c-text-starlight: 11 15 25;
+  --c-text-body: 60 69 87;
+  --c-text-muted: 93 103 121;
+  --c-text-on-signal: 255 255 255;
+  --c-text-on-ember: 255 255 255;
+  --c-text-inverse: 255 255 255;
+  --c-signal-100: 238 242 253;
+  --c-signal-300: 139 158 222;
+  --c-signal-500: 74 92 150;
+  --c-signal-700: 53 68 122;
+  --c-signal-900: 32 43 78;
+  --c-ember-300: 165 106 44;
+  --c-ember-500: 138 87 32;
+  --c-ember-900: 246 231 210;
+  --c-status-success: 47 115 85;
+  --c-status-caution: 138 100 16;
+  --c-status-danger: 177 59 59;
+  --c-status-info: 63 90 148;
+  --c-star-bright: 74 92 150;
+  --c-star-dim: 152 164 189;
+  --c-orbit-ring: 211 218 232;
+  --c-constellation: 182 192 212;
+  --c-grid-line: 234 238 245;
+  --c-nebula-indigo: 223 230 250;
+  --c-nebula-ion: 220 236 246;
+  --c-nebula-ember: 248 235 218;
+  --c-focus-ring: 53 68 122;
+  --c-scrim: 11 15 25;
+  --c-overlay-glass: 255 255 255;
+}
