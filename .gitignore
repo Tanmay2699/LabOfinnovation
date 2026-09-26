@@ -38,3 +38,6 @@ src.pre-observatory-backup/
 tailwind.config.js.pre-observatory
 space-theme-design-prompt.md
 frontend/.deepfield-backup/
+
+# Raw 4K frame masters (1.5 GB); the site ships the processed f2_*.webp
+frontend/public/frames/frame_*.png

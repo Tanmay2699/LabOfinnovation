@@ -1,9 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { useScroll, useMotionValueEvent } from 'framer-motion';
 
-// public/frames/f_001.webp … f_300.webp — every 2nd source frame at 1920w.
-const FRAME_COUNT = 300;
-const frameSrc = (i) => `/frames/f_${String(i + 1).padStart(3, '0')}.webp`;
+// public/frames/f2_001.webp … f2_240.webp — the unique frames of the 4K sequence
+// at 2560w, Gemini sparkle unblended out. Bump the prefix on re-encode; server.js caches 1y.
+const FRAME_COUNT = 240;
+const frameSrc = (i) => `/frames/f2_${String(i + 1).padStart(3, '0')}.webp`;
 
 const drawFrame = (canvas, images, index) => {
   // Fall back to the nearest earlier frame that has loaded.
@@ -67,9 +68,16 @@ const FrameScroll = () => {
   return (
     <section ref={sectionRef} data-hide-nav className="relative h-[400vh] bg-surface-void" aria-label="Robot assembly sequence">
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        <canvas ref={canvasRef} className="h-full w-full" aria-hidden="true" />
+        {/* Full viewport height at the frames' own 16:9, so the robot's head is never
+            cropped (cover on a wide window cut the top). Wider windows get faded side
+            edges; narrower ones crop the sides around the centred robot. */}
+        <canvas
+          ref={canvasRef}
+          className="absolute left-1/2 top-0 aspect-video h-full -translate-x-1/2 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]"
+          aria-hidden="true"
+        />
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-surface-void to-transparent"
+          className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-surface-void to-transparent"
           aria-hidden="true"
         />
         <div
